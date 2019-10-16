@@ -1,0 +1,52 @@
+CREATE TABLE box (
+    id serial PRIMARY KEY,
+    identifier text NOT NULL,
+    parent integer REFERENCES box (id)
+);
+CREATE INDEX on box(parent);
+
+CREATE TABLE quality (
+    id serial PRIMARY KEY,
+    name text NOT NULL
+);
+
+CREATE TABLE item (
+    id serial PRIMARY KEY,
+    name text NOT NULL,
+    box integer NOT NULL REFERENCES box (id),
+    quality integer REFERENCES quality (id),
+    price numeric,
+    notes text,
+    powers_on bool,
+    works_correctly bool
+);
+CREATE INDEX on item (box);
+CREATE INDEX on item (quality);
+
+CREATE TABLE tag (
+    id serial PRIMARY KEY,
+    name text NOT NULL
+);
+
+CREATE TABLE item_tag (
+    item_id integer NOT NULL REFERENCES item (id),
+    tag_id integer NOT NULL REFERENCES tag (id),
+    PRIMARY KEY (item_id, tag_id)
+);
+CREATE INDEX on item_tag (item_id);
+CREATE INDEX on item_tag (tag_id);
+
+CREATE TABLE "group" (
+    id serial PRIMARY KEY,
+    description text
+);
+
+CREATE TABLE item_group (
+    item_id integer NOT NULL REFERENCES item (id),
+    item_parent integer REFERENCES item (id),
+    group_id integer NOT NULL REFERENCES "group" (id),
+    PRIMARY KEY (item_id, group_id)
+);
+CREATE INDEX on item_group (item_id);
+CREATE INDEX on item_group (item_parent);
+CREATE INDEX on item_group (group_id);
